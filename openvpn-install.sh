@@ -24,7 +24,9 @@ echo -e "Выберите реализацию:\n1 - TLS_AES_128_GCM_SHA256 - р
 until [[ $tls_cipher =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_cipher;done
 
 elif [ "$tls_ver" = "2" ]; then
+echo -e "Перед выбором реализации помните что:\nАлгоритм аутентификации RSA уступает в скорости ECDSA - особенно заметно при медленном интернете\nДля полной криптостойкости алгоритму AES достаточно ключа размеров в 128 бит. Ключи размером 192 и 256 бит избыточны."
 echo -e "Выберите реализацию:\n1 - TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256 - рекомендуется\n2 - TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384\n3 - TLS-ECDHE-ECDSA-WITH-CHACHA20-POLY1305-SHA256"
+echo -e "4 - TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256\n5 - TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384\n6 - TLS-ECDHE-RSA-WITH-AES-128-CBC-SHA256\n7 - TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA256\n8 - TLS-ECDHE-RSA-WITH-CHACHA20-POLY1305-SHA256"
 until [[ $tls_cipher =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_cipher;done
 tls_cipher=$((tls_cipher + 3))
 fi
@@ -36,6 +38,8 @@ case "$tls_cipher" in
 4) tls_cipher=TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256;;
 5) tls_cipher=TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384;;
 6) tls_cipher=TLS-ECDHE-ECDSA-WITH-CHACHA20-POLY1305-SHA256;;
+7) tls_cipher=TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256;;
+8)
 esac }
 
 data_channel_settings(){
@@ -135,7 +139,7 @@ echo -e "	Хэш-функция - ${GREEN}$(echo $tls_cipher | grep -o -P 'SHA25
 echo -e "Канал даннных:\n	Шифрование - ${GREEN}$(echo $data_cipher | grep -o -P 'AES-128-GCM|AES-256-GCM|AES-128-CBC|AES-256-CBC')${DEFAULT}"
 echo -e "	Хэш-функция - ${GREEN}$(echo $data_digests | grep -o -P 'SHA256|SHA384|SHA512')${DEFAULT}"
 fi
-echo -e "Настройки PKI:\n        Алгоритм сертификатов - ${GREEN}$(echo $cert_algo | tr a-z A-Z)${DEFAULT}"
+echo -e "Настройки PKI:\n        Алгоритм клиентских сертификатов - ${GREEN}$(echo $cert_algo | tr a-z A-Z)${DEFAULT}"
 if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DEFAULT}";fi
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
 echo -e "Дополнительные настройки:"
