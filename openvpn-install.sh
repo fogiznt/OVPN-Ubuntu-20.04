@@ -400,7 +400,7 @@ echo -e "\${GREEN}Список подключённых пользователе
 if [ "\$(cat /etc/openvpn/status.log | grep 10.8.*)" = "" ];
 then echo -e "\${GREEN}Нет подключённых пользователей\${DEFAULT}"
 else
-echo -e "\${DEFAULT}|Локальный ip|   Аккаунт    |Время подключения|   ip пользователя   |\${DEFAULT}"
+echo -e "\${DEFAULT}|Локальный ip|    Аккаунт   |Время подключения|   ip пользователя   |\${DEFAULT}"
 echo "|------------|--------------|-----------------|---------------------|"
 for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.8.* | wc -l)+1;i++ ))
 do
