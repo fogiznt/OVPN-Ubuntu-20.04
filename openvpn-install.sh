@@ -219,7 +219,7 @@ cp pki/crl.pem /etc/openvpn
 if ! [ -f /etc/openvpn/crl.pem ];then echo -e "${RED}ОШИБКА, ключи crl не сгенерированы. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
 
 sed -i 's/set_var EASYRSA_ALGO '$server_cert_algo'/set_var EASYRSA_ALGO '$cert_algo'/g' /usr/share/easy-rsa/vars
-
+if [ "$cert_algo" = "ec" ] && [ "$(cat /usr/share/easy-rsa/vars | grep -o "prime256v1")" = "" ];then echo "set_var EASYRSA_CURVE prime256v1" >>vars;fi
 case "$tls_hmac" in
 tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
 tls-auth\ tls.key\ 0)echo -n -e "               TLS-auth ";;
