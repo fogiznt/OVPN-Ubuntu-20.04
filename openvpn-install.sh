@@ -475,7 +475,7 @@ tls=\$(cat /etc/openvpn/tls.key)
 cat >\$username.ovpn <<EOF
 client
 dev tun
-proto udp
+proto $proto
 remote $ip $port
 
 auth-nocache
