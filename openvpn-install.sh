@@ -483,6 +483,9 @@ verify-x509-name server name
 tls-client
 remote-cert-tls server
 
+auth $data_digests
+cipher $data_cipher
+
 persist-key
 persist-tun
 nobind
