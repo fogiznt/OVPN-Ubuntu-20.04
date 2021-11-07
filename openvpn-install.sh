@@ -598,8 +598,10 @@ echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
 hmac_settings
 network_settings
 final_config
+
 read value
 if [ "$value" = "" ];then
+cipher_base=1
 package_install
 cert_gen
 server_install
