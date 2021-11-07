@@ -187,7 +187,12 @@ echo -e "Генерация сертификатов: "
 if [ "$(echo $cipher_base | grep -o "TLS")" = "TLS" ];then
 cd /usr/share/easy-rsa/
 
-echo "set_var EASYRSA_ALGO $cert_algo" >vars
+case "$cipher_base" in
+TLS\ 1.3) server_cert_algo=ec;;
+TLS\ 1.2) server_cert_algo=$(echo $tls_cipher | grep -o -P 'RSA|ECDSA' | tr '[:upper:]' '[:lower:]' | sed 's/ecdsa/ec/g');;
+esac
+
+echo "set_var EASYRSA_ALGO $server_cert_algo" >vars
 if [ "$cert_algo" = "ec" ];then echo "set_var EASYRSA_CURVE prime256v1" >>vars;fi
 SERVER_CN="cn_$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
 echo "set_var EASYRSA_REQ_CN $SERVER_CN" >>vars
@@ -207,6 +212,8 @@ cp pki/issued/server.crt /etc/openvpn
 if ! [ -f /etc/openvpn/server.key ];then echo -e "${RED}ОШИБКА, сертификат сервера не сгенерирован. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}"; fi
 echo -n -e "               Ключ сервера "
 if ! [ -f /etc/openvpn/server.crt ];then echo -e "${RED}ОШИБКА, ключ сервера не сгенерирован. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
+
+sed -i 's/set_var EASYRSA_ALGO '$server_cert_algo'/set_var EASYRSA_ALGO '$cert_algo'/g' /usr/share/easy-rsa/vars
 
 echo -n -e "               CRL "
 EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl >&- 2>&-
