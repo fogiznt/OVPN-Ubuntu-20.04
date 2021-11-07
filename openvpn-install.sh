@@ -500,7 +500,7 @@ cat >>\$username.ovpn <<EOF
 EOF
 FOE
 
-if [ "$tls_hmac" = "tls-crypt" ];then
+if [ "$tls_hmac" = "tls-crypt tls.key" ];then
 cat >>account-manager.sh <<FOE
 cat >>\$username.ovpn <<EOF
 <tls-crypt>
@@ -509,7 +509,7 @@ cat >>\$username.ovpn <<EOF
 EOF
 FOE
 
-elif [ "$tls_hmac" = "tls-auth" ];then
+elif [ "$tls_hmac" = "tls-auth tls.key 0" ];then
 cat >>account-manager.sh <<FOE
 cat >>\$username.ovpn <<EOF
 key-direction 1
