@@ -24,7 +24,8 @@ echo -e "Выберите реализацию:\n1 - TLS_AES_128_GCM_SHA256 - р
 until [[ $tls_cipher =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_cipher;done
 
 elif [ "$tls_ver" = "2" ]; then
-echo -e "Перед выбором реализации помните что:\nАлгоритм аутентификации RSA уступает в скорости ECDSA - особенно заметно при медленном интернете\nДля полной криптостойкости алгоритму AES достаточно ключа размеров в 128 бит. Ключи размером 192 и 256 бит избыточны."
+echo -e "Перед выбором реализации помните, что:\nАлгоритм аутентификации RSA уступает в скорости ECDSA - особенно заметно при медленном интернете\nДля полной криптостойкости алгоритму AES достаточно ключа размером в 128 бит. Ключи размером 192 и 256 бит избыточны."
+echo -e "Используйте симметричный алгоритм CHACHA20-POLY1305 при отсутствии аппаратной поддержки алгоритма AES"
 echo -e "Выберите реализацию:\n1 - TLS-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256 - рекомендуется\n2 - TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384\n3 - TLS-ECDHE-ECDSA-WITH-CHACHA20-POLY1305-SHA256"
 echo -e "4 - TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256\n5 - TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384\n6 - TLS-ECDHE-RSA-WITH-AES-128-CBC-SHA256\n7 - TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA256\n8 - TLS-ECDHE-RSA-WITH-CHACHA20-POLY1305-SHA256"
 until [[ $tls_cipher =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_cipher;done
@@ -39,7 +40,11 @@ case "$tls_cipher" in
 5) tls_cipher=TLS-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384;;
 6) tls_cipher=TLS-ECDHE-ECDSA-WITH-CHACHA20-POLY1305-SHA256;;
 7) tls_cipher=TLS-ECDHE-RSA-WITH-AES-128-GCM-SHA256;;
-8)
+8) tls_cipher=TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384;;
+9) tls_cipher=TLS-ECDHE-RSA-WITH-AES-128-CBC-SHA256;;
+10) tls_cipher=TLS-ECDHE-RSA-WITH-AES-256-CBC-SHA256;;
+11) tls_cipher=TLS-ECDHE-RSA-WITH-CHACHA20-POLY1305-SHA256;;
+
 esac }
 
 data_channel_settings(){
