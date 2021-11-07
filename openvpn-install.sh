@@ -119,9 +119,9 @@ esac }
 
 final_config(){
 case "$cipher_base" in
-1) if [ "$tls_ver" = "1" ];then cipher_base=TLS\ 1.3;else cipher_base=TLS\ 1.2;fi;;
-2) cipher_base=Статичный\ ключ;;
-3) cipher_base=Отсутствует;;
+1) if [ "$tls_ver" = "1" ];then cipher_mode=TLS\ 1.3;else cipher_mode=TLS\ 1.2;fi;;
+2) cipher_mode=Статичный\ ключ;;
+3) cipher_mode=Отсутствует;;
 esac
 
 echo -e "\nОзнакомтесь с устанавливаемой конфигурацией"
@@ -139,7 +139,7 @@ echo -e "Настройки PKI:\n        Алгоритм сертификат�
 if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DEFAULT}";fi
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
 echo -e "Дополнительные настройки:"
-if [ "$cipher_base" = "TLS 1.3" ] || [ "$cipher_base" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$tls_hmac${DEFAULT}";fi
+if [ "$cipher_mode" = "TLS 1.3" ] || [ "$cipher_mode" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$tls_hmac${DEFAULT}";fi
 echo -n -e "	Максимальное кол-во клиентов - "
 if [ "$subnet_mask" = "255.255.255.0" ];then echo -e "${GREEN}253${DEFAULT}";else echo -e "${GREEN}65533${DEFAULT}";fi
 echo "-----------------------------------------------------------"
