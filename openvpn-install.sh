@@ -213,13 +213,12 @@ if ! [ -f /etc/openvpn/server.key ];then echo -e "${RED}ОШИБКА, серти
 echo -n -e "               Ключ сервера "
 if ! [ -f /etc/openvpn/server.crt ];then echo -e "${RED}ОШИБКА, ключ сервера не сгенерирован. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
 
-sed -i 's/set_var EASYRSA_ALGO '$server_cert_algo'/set_var EASYRSA_ALGO '$cert_algo'/g' /usr/share/easy-rsa/vars
-
 echo -n -e "               CRL "
 EASYRSA_CRL_DAYS=3650 ./easyrsa gen-crl >&- 2>&-
 cp pki/crl.pem /etc/openvpn
 if ! [ -f /etc/openvpn/crl.pem ];then echo -e "${RED}ОШИБКА, ключи crl не сгенерированы. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
 
+sed -i 's/set_var EASYRSA_ALGO '$server_cert_algo'/set_var EASYRSA_ALGO '$cert_algo'/g' /usr/share/easy-rsa/vars
 
 case "$tls_hmac" in
 tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
