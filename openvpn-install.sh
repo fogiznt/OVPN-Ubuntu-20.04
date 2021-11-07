@@ -206,8 +206,8 @@ if ! [ -f /etc/openvpn/crl.pem ];then echo -e "${RED}ОШИБКА, ключи cr
 
 
 case "$tls_hmac" in
-tls-crypt)echo -n -e "               TLS-crypt ";;
-tls-auth)echo -n -e "               TLS-auth ";;
+tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
+tls-auth\ tls.key\ 0)echo -n -e "               TLS-auth ";;
 esac
 
 if ! [ "$tls_hmac" = "Не используется" ];then
