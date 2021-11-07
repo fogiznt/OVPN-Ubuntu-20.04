@@ -79,7 +79,8 @@ esac
 }
 
 clients_settings(){
-ip=$(curl check-host.net/ip 2>/dev/null) >&- 2>&-
+#ip=$(curl check-host.net/ip 2>/dev/null) >&- 2>&-
+ip=$(hostname -i)
 echo -e "Укажите внешний ip сервера"
 read -rp "" -e -i $ip ip
 echo -e "Выберите DNS сервер\n1 - CloudFlare - рекомендуется\n2 - Google DNS\n3 - Quad9\n4 - Quad9 без цензуры\n5 - Yandex Базовый\n6 - Yandex Безопасный\n7 - Yandex Семейный\n8 - AdGuard DNS - типа без рекламы\n9 - Указать свой DNS"
