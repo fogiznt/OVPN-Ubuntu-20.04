@@ -311,16 +311,16 @@ auth $data_digests
 tls-version-max $(echo $cipher_base | grep -o -P '1.2|1.3')
 EOF
 
-if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
-cat >>server.conf <<EOF
-tls-ciphersuites $tls_cipher
-EOF
+  if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
+  cat >>server.conf <<FOE
+  tls-ciphersuites $tls_cipher
+  FOE
 
-elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
-cat >>server.conf <<EOF
-tls-cipher $tls_cipher
-EOF
-fi
+  elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
+  cat >>server.conf <<FOE
+  tls-cipher $tls_cipher
+  FOE
+  fi
 
 cat >>server.conf <<EOF
 tls-server
