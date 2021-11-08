@@ -309,7 +309,17 @@ ncp-ciphers $data_cipher
 auth $data_digests
 
 tls-version-max $(echo $cipher_base | grep -o -P '1.2|1.3')
+EOF
+
+if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
+cat >>server.conf <<EOF
+tls-ciphersuites $tls_cipher
+EOF
+elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
 tls-cipher $tls_cipher
+cat >>server.conf <<EOF
+fi
+
 tls-server
 $tls_hmac
 ecdh-curve prime256v1
