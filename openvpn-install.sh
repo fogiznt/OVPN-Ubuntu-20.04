@@ -641,13 +641,14 @@ chmod +x account-manager.sh
 
 #----------------------------------------------------------------------
 
+echo -e "Укажите режим аутентификации:\n1 - TLS - сертификаты\n2 - Логин/Пароль\n3 - Cтатичный ключ"
+until [[ $auth_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 auth_mode;done
+
 echo -e "Выберите режим установки:\n1 - автоматический\n2 - настраиваемый"
-until [[ $install_type =~ ^[1-2]$ ]]; do
-read -rp "[1-2]:" -e -i 1 install_type
-done
+until [[ $install_type =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 install_type;done
 
 #----------------------------------------------------------------------
-if [ "$install_type" = "1" ];then
+if [ "$auth_mode" = "1" ] && [ "$install_type" = "1" ];then
 default_settings
 final_config
 read install_option
@@ -660,7 +661,7 @@ apache2_settings
 account_manager
 #-----------------------------------------------------------------------
 
-elif [ "$install_type" = "2" ];then
+elif [ "$auth_mode" = "1" ] && [ "$install_type" = "2" ];then
 echo -e "Выберете протокол:\n1 - udp\n2 - tcp"
 until [[ $proto =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 proto;done
 case "$proto" in
@@ -671,10 +672,6 @@ esac
 echo -e "Укажите порт:"
 until [[ $port =~ ^[0-9]+$ ]] && [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; do read -rp "" -e -i 443 port;done
 
-echo -e "Укажите режим шифрования:\n1 - TLS\n2 - статичный ключ\n3 - без шифрования"
-until [[ $cipher_base =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 cipher_base;done
-
-if [ "$cipher_base" = "1" ];then
 echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
 echo -e "${GREEN}Настройка канала данных${DEFAULT}"
