@@ -312,14 +312,14 @@ tls-version-max $(echo $cipher_base | grep -o -P '1.2|1.3')
 EOF
 
   if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
-  cat >>server.conf <<FOE
+  cat >>server.conf <<FEO
   tls-ciphersuites $tls_cipher
-  FOE
+  FEO
 
   elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
-  cat >>server.conf <<FOE
+  cat >>server.conf <<FEO
   tls-cipher $tls_cipher
-  FOE
+  FEO
   fi
 
 cat >>server.conf <<EOF
