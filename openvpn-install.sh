@@ -15,6 +15,8 @@ echo -e "/ /_/ /  / _ \/ // / / _ \/ __// // /      / __/ / // / _ / // //_  _/"
 echo -e "\____/  /_.__/\_,_/ /_//_/\__/ \_,_/      /____/ \___/ (_)\___/  /_/  ";
 echo -e "                                                                      ${DEFAULT}";
 
+#----------------------------------------------------------------------
+
 default_settings(){
 proto=udp
 port=443
@@ -35,6 +37,8 @@ tls_hmac=tls-crypt\ tls.key
 subnet=10.8.8.0
 subnet_mask=255.255.255.0
 }
+
+#----------------------------------------------------------------------
 
 tls_settings(){
 echo -e "Выберите версию TLS:\n1 - 1.3 - рекомендуется\n2 - 1.2"
@@ -68,6 +72,8 @@ case "$tls_cipher" in
 
 esac }
 
+#----------------------------------------------------------------------
+
 data_channel_settings(){
 echo -e "Выберите алгоритм шифрования:\n1 - AES-128-GCM - рекомендуется\n2 - AES-256-GCM\n3 - AES-128-CBC - для старых устройств\n4 - AES-256-CBC"
 until [[ $data_cipher =~ ^[1-4]$ ]]; do read -rp "[1-4]:" -e -i 1 data_cipher;done
@@ -87,8 +93,10 @@ case "$data_digests" in
 3) data_digests=SHA512;;
 esac }
 
+#----------------------------------------------------------------------
+
 pki_settings(){
-echo -e "Выберите алгоритм сертификатов:\n1 - EC - рекомендуется\n2 - RSA"
+echo -e "Выберите алгоритм клиентских сертификатов:\n1 - EC - рекомендуется\n2 - RSA"
 until [[ $cert_algo =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_algo;done
 
 if [ "$cert_algo" = "1" ];then
@@ -107,6 +115,8 @@ case "$cert_algo" in
 2) cert_algo=rsa;;
 esac
 }
+
+#----------------------------------------------------------------------
 
 clients_settings(){
 #ip=$(curl check-host.net/ip 2>/dev/null) >&- 2>&-
@@ -127,6 +137,8 @@ case "$dns_server" in
 8) dns_server=AdGuard\ DNS dns_server1=94.140.14.14 dns_server2=94.140.15.15;;
 esac }
 
+#----------------------------------------------------------------------
+
 network_settings(){
 echo -e "Максимальное кол-во клиентов:\n1 - 253 - рекомендуется\n2 - 65533"
 until [[ $subnet_mask =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 subnet_mask;done
@@ -137,6 +149,8 @@ case "$subnet_mask" in
 esac
 }
 
+#----------------------------------------------------------------------
+
 hmac_settings(){
 echo -e "Дополнительная подпись HMAC к TLS-пакетам:\n1 - TLS-crypt - рекомендуется\n2 - TLS-auth\n3 - не использовать"
 until [[ $tls_hmac =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_hmac;done
@@ -146,6 +160,7 @@ case "$tls_hmac" in
 3) tls_hmac=Не\ используется;;
 esac }
 
+#----------------------------------------------------------------------
 
 final_config(){
 case "$cipher_base" in
@@ -176,6 +191,8 @@ echo "-----------------------------------------------------------"
 echo -e "\nEnter - начать установку\nCtrl+C - отмена"
 }
 
+#----------------------------------------------------------------------
+
 package_install(){
 echo -n -e "${DEFAULT}Обновление списка пакетов ${DEFAULT}" & echo -e ${GREEN} $(apt update 2>/dev/null | grep packages | cut -d '.' -f 1 | tr -cd '[[:digit:]]') "${DEFAULT} пакетов могут быть обновлены."
 echo -e "Установка пакетов: "
@@ -201,6 +218,8 @@ if [ "$(dpkg --get-selections apache2 | awk '{print $2}')" = "install" ]; then e
 echo -n -e "               zip " & echo -n $(apt install zip -y >&- 2>&-)
 if [ "$(dpkg --get-selections zip | awk '{print $2}')" = "install" ]; then echo -e "${GREEN}OK${DEFAULT}"; else echo -e "${RED}ОШИБКА, попробуйте установить данный пакет самостоятельно -${GREEN} apt install zip ${DEFAULT}" ;fi
 }
+
+#----------------------------------------------------------------------
 
 cert_gen(){
 echo -e "Генерация сертификатов: "
@@ -251,6 +270,8 @@ openvpn --genkey --secret /etc/openvpn/tls.key
 if ! [ -f /etc/openvpn/tls.key ];then echo -e "${RED}ОШИБКА, ключи TLS не сгенерированы. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
 fi
 fi }
+
+#----------------------------------------------------------------------
 
 server_install(){
 echo -e "Окончание установки: "
@@ -338,6 +359,8 @@ systemctl enable openvpn@server >&- 2>&-
 fi
 }
 
+#----------------------------------------------------------------------
+
 iptables_settings(){
 iptables -t nat -A POSTROUTING -s $subnet/$subnet_mask -j MASQUERADE
 echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -350,6 +373,8 @@ iptables -I FORWARD 1 -i tun+ -j ACCEPT
 iptables -I FORWARD 1 -i tun+ -o lo -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -I FORWARD 1 -i lo -o tun+ -m state --state RELATED,ESTABLISHED -j ACCEPT
 }
+
+#----------------------------------------------------------------------
 
 apache2_settings(){
 echo -e -n "               Apache2 "
@@ -374,6 +399,8 @@ else
 echo -e "${GREEN}запущен${DEFAULT}"
 fi
 }
+
+#----------------------------------------------------------------------
 
 account_manager(){
 cd ~
@@ -599,6 +626,8 @@ FOE
 chmod +x account-manager.sh
 }
 
+#----------------------------------------------------------------------
+
 echo -e "Выберите режим установки:\n1 - автоматический\n2 - настраиваемый"
 until [[ $install_type =~ ^[1-2]$ ]]; do
 read -rp "[1-2]:" -e -i 1 install_type
@@ -606,9 +635,16 @@ done
 
 #----------------------------------------------------------------------
 if [ "$install_type" = "1" ];then
-echo -e "\nEnter - начать установку\nCtrl+C - отмена"
+default_settings
+final_config
 read install_option
 if ! [ "$install_option" = "" ];then echo "Отмена установки" && exit;fi
+package_install
+cert_gen
+server_install
+iptables_settings
+apache2_settings
+account_manager
 #-----------------------------------------------------------------------
 
 elif [ "$install_type" = "2" ];then
