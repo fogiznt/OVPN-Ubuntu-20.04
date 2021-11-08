@@ -329,6 +329,16 @@ ecdh-curve prime256v1
 EOF
 fi
 
+if [ "$auth_mode" = "Логин/Пароль" ];then
+cat >>server.conf <<EOF
+auth-user-pass-verify /etc/openvpn/verify.sh via-file
+client-cert-not-required
+username-as-common-name
+tmp-dir /etc/openvpn/tmp
+script-security 2
+EOF
+fi
+
 cat >>server.conf <<EOF
 crl-verify crl.pem
 
