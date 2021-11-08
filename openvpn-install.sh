@@ -389,7 +389,7 @@ mkdir /etc/openvpn/tmp
 touch /etc/openvpn/user.pass
 cat >verify.sh <<EOF
 #!/bin/sh
-USERS=`cat /etc/openvpn/user.pass`
+USERS=\`cat /etc/openvpn/user.pass\`
 vpn_verify() {
 if [ ! \$1 ] || [ ! \$2 ]; then
 exit 1
@@ -403,7 +403,7 @@ done
 if [ ! \$1 ] || [ ! -e \$1 ]; then
 exit 1
 fi
-vpn_verify `cat \$1`
+vpn_verify \`cat \$1\`
 exit 1
 
 EOF
