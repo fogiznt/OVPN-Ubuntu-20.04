@@ -386,26 +386,27 @@ EOF
 
 if [ "$auth_mode" = "Логин/Пароль" ];then
 mkdir /etc/openvpn/tmp
+touch /etc/openvpn/user.pass
 cat >verify.sh <<EOF
 #!/bin/sh
 USERS=`cat /etc/openvpn/user.pass`
 vpn_verify() {
-if [ ! $1 ] || [ ! $2 ]; then
+if [ ! \$1 ] || [ ! \$2 ]; then
 exit 1
 fi
-for i in $USERS; do
-if [ "$i" = "$1:$2" ]; then
+for i in \$USERS; do
+if [ "\$i" = "\$1:\$2" ]; then
 exit 0
 fi
 done
 }
-if [ ! $1 ] || [ ! -e $1 ]; then
+if [ ! \$1 ] || [ ! -e \$1 ]; then
 exit 1
 fi
-vpn_verify `cat $1`
+vpn_verify `cat \$1`
 exit 1
+
 EOF
-touch /etc/openvpn/user.pass
 chmod +x /etc/openvpn/verify.sh
 fi
 
