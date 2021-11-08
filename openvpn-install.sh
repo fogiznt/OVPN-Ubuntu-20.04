@@ -135,11 +135,8 @@ case "$dns_server" in
 6) dns_server=Yandex\ Безопасный dns_server1=77.88.8.88 dns_server2=77.88.8.2;;
 7) dns_server=Yandex\ Семейный dns_server1=77.88.8.7 dns_server2=77.88.8.3;;
 8) dns_server=AdGuard\ DNS dns_server1=94.140.14.14 dns_server2=94.140.15.15;;
-esac }
+esac 
 
-#----------------------------------------------------------------------
-
-network_settings(){
 echo -e "Максимальное кол-во клиентов:\n1 - 253 - рекомендуется\n2 - 65533"
 until [[ $subnet_mask =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 subnet_mask;done
 
@@ -147,6 +144,20 @@ case "$subnet_mask" in
 1)subnet=10.8.8.0 subnet_mask=255.255.255.0;;
 2)subnet=10.8.0.0 subnet_mask=255.255.0.0;;
 esac
+}
+
+#----------------------------------------------------------------------
+
+network_settings(){
+echo -e "Выберете протокол:\n1 - udp\n2 - tcp"
+until [[ $proto =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 proto;done
+case "$proto" in
+1) proto=udp;;
+2) proto=tcp;;
+esac
+
+echo -e "Укажите порт:"
+until [[ $port =~ ^[0-9]+$ ]] && [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; do read -rp "" -e -i 443 port;done
 }
 
 #----------------------------------------------------------------------
@@ -825,6 +836,7 @@ account_manager
 fi
 #elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
+network_settings
 echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
 echo -e "${GREEN}Настройка канала данных${DEFAULT}"
@@ -835,7 +847,6 @@ echo -e "${GREEN}Клиентские настройки${DEFAULT}"
 clients_settings
 echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
 hmac_settings
-network_settings
 final_config
 read value
 if [ "$value" = "" ];then
