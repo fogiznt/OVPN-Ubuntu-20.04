@@ -320,6 +320,7 @@ tls-cipher $tls_cipher
 cat >>server.conf <<EOF
 fi
 
+cat >>server.conf <<EOF
 tls-server
 $tls_hmac
 ecdh-curve prime256v1
