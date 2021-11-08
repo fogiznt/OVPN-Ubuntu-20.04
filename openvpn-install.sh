@@ -315,9 +315,11 @@ if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
 cat >>server.conf <<EOF
 tls-ciphersuites $tls_cipher
 EOF
+
 elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
 cat >>server.conf <<EOF
 tls-cipher $tls_cipher
+EOF
 fi
 
 cat >>server.conf <<EOF
