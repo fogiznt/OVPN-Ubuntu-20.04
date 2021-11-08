@@ -823,6 +823,28 @@ iptables_settings
 apache2_settings
 account_manager
 fi
+elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
+elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
+echo -e "${GREEN}Настройка канала управления${DEFAULT}"
+tls_settings
+echo -e "${GREEN}Настройка канала данных${DEFAULT}"
+data_channel_settings
+echo -e "${GREEN}Настройка сертификатов${DEFAULT}"
+pki_settings
+echo -e "${GREEN}Клиентские настройки${DEFAULT}"
+clients_settings
+echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
+hmac_settings
+network_settings
+final_config
+read value
+if [ "$value" = "" ];then
+package_install
+cert_gen
+server_install
+iptables_settings
+apache2_settings
+account_manager
 fi
 
 
