@@ -21,7 +21,7 @@ default_settings(){
 proto=udp
 port=443
 tls_ver=1
-cipher_base="TLS 1.3"
+auth_mode="TLS 1.3"
 tls_cipher=TLS_AES_128_GCM_SHA256
 data_cipher=AES-128-GCM
 data_digests=SHA256
@@ -163,17 +163,17 @@ esac }
 #----------------------------------------------------------------------
 
 final_config(){
-case "$cipher_base" in
-1) if [ "$tls_ver" = "1" ];then cipher_base=TLS\ 1.3;else cipher_base=TLS\ 1.2;fi;;
-2) cipher_base=Статичный\ ключ;;
-3) cipher_base=Отсутствует;;
+case "$auth_mode" in
+1) if [ "$tls_ver" = "1" ];then auth_mode=TLS\ 1.3;else auth_mode=TLS\ 1.2;fi;;
+2) auth_mode=Логин/Пароль;;
+3) auth_mode=Статичный\ ключ;;
 esac
 
 echo -e "\nОзнакомтесь с устанавливаемой конфигурацией"
 echo -e "-----------------------------------------------------------"
 echo -e "Порт - ${GREEN}$(echo $proto | tr a-z A-Z):$port${DEFAULT}"
-echo -e "Шифрование - ${GREEN}$cipher_base${DEFAULT}"
-if [ "$cipher_base" = "TLS 1.3" ] || [ "$cipher_base" = "TLS 1.2" ];then
+echo -e "Режим аутентификации - ${GREEN}$auth_mode${DEFAULT}"
+if [ "$auth_mode" = "TLS 1.3" ] || [ "$auth_mode" = "TLS 1.2" ];then
 echo -e "Канал управления:\n	Алгоритм обмена ключами - ${GREEN}ECDH${DEFAULT}\n	Алгоритм аутентификации - ${GREEN}ECDSA${DEFAULT}"
 echo -e "        Симметричное шифрование - ${GREEN}$(echo $tls_cipher | grep -o -P 'AES_128_GCM|AES_256_GCM|CHACHA20_POLY1305|AES-128-GCM|AES-256-GCM|CHACHA20-POLY1305')${DEFAULT}"
 echo -e "	Хэш-функция - ${GREEN}$(echo $tls_cipher | grep -o -P 'SHA256|SHA384')${DEFAULT}"
@@ -184,7 +184,7 @@ echo -e "Настройки PKI:\n        Алгоритм клиентских 
 if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DEFAULT}";fi
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
 echo -e "Дополнительные настройки:"
-if [ "$cipher_base" = "TLS 1.3" ] || [ "$cipher_base" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$(echo $tls_hmac | grep -o -P 'tls-crypt|tls-auth|Не используется')${DEFAULT}";fi
+if [ "$auth_mode" = "TLS 1.3" ] || [ "$auth_mode" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$(echo $tls_hmac | grep -o -P 'tls-crypt|tls-auth|Не используется')${DEFAULT}";fi
 echo -n -e "	Максимальное кол-во клиентов - "
 if [ "$subnet_mask" = "255.255.255.0" ];then echo -e "${GREEN}253${DEFAULT}";else echo -e "${GREEN}65533${DEFAULT}";fi
 echo "-----------------------------------------------------------"
@@ -224,10 +224,10 @@ if [ "$(dpkg --get-selections zip | awk '{print $2}')" = "install" ]; then echo 
 cert_gen(){
 echo -e "Генерация сертификатов: "
 
-if [ "$(echo $cipher_base | grep -o "TLS")" = "TLS" ];then
+if [ "$(echo $auth_mode | grep -o "TLS")" = "TLS" ];then
 cd /usr/share/easy-rsa/
 
-case "$cipher_base" in
+case "$auth_mode" in
 TLS\ 1.3) server_cert_algo=ec;;
 TLS\ 1.2) server_cert_algo=$(echo $tls_cipher | grep -o -P 'RSA|ECDSA' | tr '[:upper:]' '[:lower:]' | sed 's/ecdsa/ec/g');;
 esac
@@ -292,12 +292,12 @@ server $subnet $subnet_mask
 port $port
 EOF
 
-if [ "$(echo $cipher_base | grep -o "Статичный ключ")" = "Статичный ключ" ];then
+if [ "$(echo $auth_mode | grep -o "Статичный ключ")" = "Статичный ключ" ];then
 cat >>server.conf <<EOF
 secret static.key
 EOF
 
-elif [ "$(echo $cipher_base | grep -o "TLS")" = "TLS" ];then
+elif [ "$(echo $auth_mode | grep -o "TLS")" = "TLS" ];then
 cat >>server.conf <<EOF
 ca ca.crt
 cert server.crt
@@ -308,15 +308,15 @@ cipher $data_cipher
 ncp-ciphers $data_cipher
 auth $data_digests
 
-tls-version-max $(echo $cipher_base | grep -o -P '1.2|1.3')
+tls-version-max $(echo $auth_mode | grep -o -P '1.2|1.3')
 EOF
 
-if [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.3" ];then
+if [ "$(echo $auth_mode | grep -o -P '1.2|1.3')" = "1.3" ];then
 cat >>server.conf <<EOF
 tls-ciphersuites $tls_cipher
 EOF
 
-elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
+elif [ "$(echo $auth_mode | grep -o -P '1.2|1.3')" = "1.2" ];then
 cat >>server.conf <<EOF
 tls-cipher $tls_cipher
 EOF
