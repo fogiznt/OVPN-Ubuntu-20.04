@@ -316,8 +316,8 @@ cat >>server.conf <<EOF
 tls-ciphersuites $tls_cipher
 EOF
 elif [ "$(echo $cipher_base | grep -o -P '1.2|1.3')" = "1.2" ];then
-tls-cipher $tls_cipher
 cat >>server.conf <<EOF
+tls-cipher $tls_cipher
 fi
 
 cat >>server.conf <<EOF
