@@ -823,7 +823,7 @@ iptables_settings
 apache2_settings
 account_manager
 fi
-elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
+#elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
 echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
@@ -845,6 +845,7 @@ server_install
 iptables_settings
 apache2_settings
 account_manager
+fi
 fi
 
 
