@@ -639,6 +639,92 @@ FOE
 chmod +x account-manager.sh
 }
 
+pap_account_manager(){
+#!/bin/bash
+#RED='\033[1;31m'
+#GREEN='\033[1;32m'
+#DEFAULT='\033[0m'
+f=1
+while f=1
+do
+echo -e "\nНастройка пользователей VPN\nВыберите действие
+---------------------------------------
+1 - Список учётных записей VPN        |
+2 - Список подключённых пользователей |
+3 - Сменить пароль учётной записи     |
+4 - Добавить учётную запись           |
+5 - Удалить учётную запись            |
+6 - Выйти из программы                |
+---------------------------------------"
+read value
+case "\$value" in
+1)
+echo -e "Список учётных записей для подключения:"
+cat /etc/openvpn/user.pass
+;;
+2)
+echo -e "\${GREEN}Список подключённых пользователей:\n\${DEFAULT}"
+if [ "\$(cat /etc/openvpn/status.log | grep 10.8.*)" = "" ];
+then echo -e "\${GREEN}Нет подключённых пользователей\${DEFAULT}"
+else
+echo -e "\${DEFAULT}|Локальный ip|    Аккаунт   |Время подключения|   ip пользователя   |\${DEFAULT}"
+echo "|------------|--------------|-----------------|---------------------|"
+for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.8.* | wc -l)+1;i++ ))
+do
+echo -n "|\$(printf " %10s " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$1}'))|"
+echo -n "\$(printf "%11s   " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}'))|"
+echo -n "\$(printf "%16s " "\$(grep "\$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}')" /etc/openvpn/status.log | sed -n '1p' | sed 's/,/ /g' | awk '{print \$6,\$7,\$8}')")|"
+echo "\$(printf "%17s    " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" |sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$3}'| sed 's/:/ /g' | awk '{print \$1}'))|"
+done
+fi;;
+3)
+echo -e "Смена пароля\nВведите имя пользователя"
+cat /etc/openvpn/user.pass
+echo "---------------------------------------"
+read username
+if ! [ "\$(grep -w \$username /etc/openvpn/user.pass)" = ""  ];
+then
+echo -e "Введите новый пароль"
+read password
+sed -i 's/'\$username':'\$(grep \$username /etc/openvpn/user.pass | sed 's/'\$username'://g')'/'\$username':'\$password'/g' /etc/openvpn/user.pass
+else echo "Пользователя не существует"
+fi
+;;
+4)
+echo -e "Добавление нового пользователя\nВведите имя пользователя"
+cat /etc/openvpn/user.pass
+echo "---------------------------------------"
+read username
+if [ "\$(grep -w \$username /etc/openvpn/user.pass)" = ""  ];
+then
+echo -e "Enter - случайный пароль\nИли введите свой"
+read password
+if [ "\$(echo \$password)" = "" ]; then
+password=\$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c\${1:-16};echo;)
+fi
+echo \$username:\$password >> /etc/openvpn/user.pass
+else echo -e "Пользователь уже существует"
+fi
+;;
+5)
+echo -e "Удаление пользователя\nВведите имя пользователя"
+cat /etc/openvpn/user.pass
+echo "---------------------------------------"
+read username
+if ! [ "\$(grep -w \$username /etc/openvpn/user.pass)" = ""  ];
+then
+sed -i /\$username/d /etc/openvpn/user.pass
+else echo -e "Пользователя не существует"
+fi
+;;
+6)
+echo -e "Выход из программы"
+exit;;
+
+esac
+done
+}
+
 #----------------------------------------------------------------------
 
 echo -e "Укажите режим аутентификации:\n1 - TLS - сертификаты\n2 - Логин/Пароль\n3 - Cтатичный ключ"
