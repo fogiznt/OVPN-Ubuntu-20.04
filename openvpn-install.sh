@@ -229,7 +229,7 @@ if [ "$(dpkg --get-selections zip | awk '{print $2}')" = "install" ]; then echo 
 cert_gen(){
 echo -e "Генерация сертификатов: "
 
-if [ "$auth_mode" = "TLS" ];then
+if ! [ "$auth_mode" = "Статичный ключ" ];then
 cd /usr/share/easy-rsa/
 
 case "$tls_ver" in
