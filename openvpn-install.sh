@@ -20,8 +20,8 @@ echo -e "                                                                      $
 default_settings(){
 proto=udp
 port=443
-tls_ver=1
-auth_mode="TLS 1.3"
+auth_mode="TLS"
+tls_ver=TLS\ 1.3
 tls_cipher=TLS_AES_128_GCM_SHA256
 data_cipher=AES-128-GCM
 data_digests=SHA256
