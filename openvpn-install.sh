@@ -502,12 +502,12 @@ then echo -e "\${GREEN}Нет подключённых пользователе�
 else
 echo -e "\${DEFAULT}|Локальный ip|    Аккаунт   |Время подключения|   ip пользователя   |\${DEFAULT}"
 echo "|------------|--------------|-----------------|---------------------|"
-for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.8.* | wc -l)+1;i++ ))
+for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.* | wc -l)+1;i++ ))
 do
-echo -n "|\$(printf " %10s " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$1}'))|"
-echo -n "\$(printf "%11s   " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}'))|"
-echo -n "\$(printf "%16s " "\$(grep "\$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}')" /etc/openvpn/status.log | sed -n '1p' | sed 's/,/ /g' | awk '{print \$6,\$7,\$8}')")|"
-echo "\$(printf "%17s    " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" |sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$3}'| sed 's/:/ /g' | awk '{print \$1}'))|"
+echo -n "|\$(printf " %10s " \$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$1}'))|"
+echo -n "\$(printf "%11s   " \$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}'))|"
+echo -n "\$(printf "%16s " "\$(grep "\$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}')" /etc/openvpn/status.log | sed -n '1p' | sed 's/,/ /g' | awk '{print \$6,\$7,\$8}')")|"
+echo "\$(printf "%17s    " \$(cat /etc/openvpn/status.log | grep "10.8.*" |sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$3}'| sed 's/:/ /g' | awk '{print \$1}'))|"
 done
 fi;;
 3)
@@ -708,12 +708,12 @@ then echo -e "\${GREEN}Нет подключённых пользователе�
 else
 echo -e "\${DEFAULT}|Локальный ip|    Аккаунт   |Время подключения|   ip пользователя   |\${DEFAULT}"
 echo "|------------|--------------|-----------------|---------------------|"
-for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.8.* | wc -l)+1;i++ ))
+for (( i=1;i<\$(cat /etc/openvpn/status.log | grep 10.8.* | wc -l)+1;i++ ))
 do
-echo -n "|\$(printf " %10s " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$1}'))|"
-echo -n "\$(printf "%11s   " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}'))|"
-echo -n "\$(printf "%16s " "\$(grep "\$(cat /etc/openvpn/status.log | grep "10.8.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}')" /etc/openvpn/status.log | sed -n '1p' | sed 's/,/ /g' | awk '{print \$6,\$7,\$8}')")|"
-echo "\$(printf "%17s    " \$(cat /etc/openvpn/status.log | grep "10.8.8.*" |sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$3}'| sed 's/:/ /g' | awk '{print \$1}'))|"
+echo -n "|\$(printf " %10s " \$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$1}'))|"
+echo -n "\$(printf "%11s   " \$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}'))|"
+echo -n "\$(printf "%16s " "\$(grep "\$(cat /etc/openvpn/status.log | grep "10.8.*" | sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$2}')" /etc/openvpn/status.log | sed -n '1p' | sed 's/,/ /g' | awk '{print \$6,\$7,\$8}')")|"
+echo "\$(printf "%17s    " \$(cat /etc/openvpn/status.log | grep "10.8.*" |sed -n ''\$i'p'| sed 's/,/ /g' | awk '{print \$3}'| sed 's/:/ /g' | awk '{print \$1}'))|"
 done
 fi;;
 3)
