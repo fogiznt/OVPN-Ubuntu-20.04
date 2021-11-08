@@ -679,6 +679,9 @@ chmod +x account-manager.sh
 }
 
 pap_account_manager(){
+cd ~
+touch account-manager.sh
+cat >account-manager.sh <<FOE
 #!/bin/bash
 #RED='\033[1;31m'
 #GREEN='\033[1;32m'
@@ -762,6 +765,7 @@ exit;;
 
 esac
 done
+FOE
 }
 
 #----------------------------------------------------------------------
