@@ -15,6 +15,27 @@ echo -e "/ /_/ /  / _ \/ // / / _ \/ __// // /      / __/ / // / _ / // //_  _/"
 echo -e "\____/  /_.__/\_,_/ /_//_/\__/ \_,_/      /____/ \___/ (_)\___/  /_/  ";
 echo -e "                                                                      ${DEFAULT}";
 
+default_settings(){
+proto=udp
+port=443
+tls_ver=1
+cipher_base="TLS 1.3"
+tls_cipher=TLS_AES_128_GCM_SHA256
+data_cipher=AES-128-GCM
+data_digests=SHA256
+cert_algo=ec
+cert_curve=prime256v1
+ip=$(hostname -i)
+echo -e "Укажите внешний ip сервера"
+read -rp "" -e -i $ip ip
+dns_server=CloudFlare
+dns_server1=1.1.1.1
+dns_server2=1.0.0.1
+tls_hmac=tls-crypt\ tls.key
+subnet=10.8.8.0
+subnet_mask=255.255.255.0
+}
+
 tls_settings(){
 echo -e "Выберите версию TLS:\n1 - 1.3 - рекомендуется\n2 - 1.2"
 until [[ $tls_ver =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 tls_ver;done
