@@ -324,7 +324,7 @@ cipher $data_cipher
 ncp-ciphers $data_cipher
 auth $data_digests
 
-tls-version-max $(echo $auth_mode | grep -o -P '1.2|1.3')
+tls-version-max $(echo $tls_ver | grep -o -P '1.2|1.3')
 EOF
 
 if [ "$tls_ver" = "TLS 1.3" ];then
