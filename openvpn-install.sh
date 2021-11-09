@@ -848,6 +848,7 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
+fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
 network_settings
