@@ -350,7 +350,7 @@ tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
 tls-auth\ tls.key\ 0)echo -n -e "               TLS-auth ";;
 esac
 
-if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ] && [ "$cert_availability" = "1" ];then
+if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ];then
 echo -n -e "               client.ovpn "
 cd ~
 cat >client.ovpn <<EOF
