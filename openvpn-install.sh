@@ -149,44 +149,45 @@ if [ "$auth_mode" = "Логин/Пароль" ];then
 echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
 until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done
 
-if ! [ "connect_mode" = "2" ]; then
-echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
-echo -e "Убедитесь, что вы не исчерпали лимит бесплатных сертификатов ( 5 за 2 недели). \nЛибо загрузите свои сертификаты с вашего ПК\n"
-echo -e "1 - у меня нет сертификата"
-echo -e "2 - у меня есть сертификат"
-until [[ $cert_availability =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_availability;done
-case "$cert_availability" in
-1)
-echo -e "Укажите ваш домен"
-read domain;;
-2)
-echo -e "Укажите ваш домен"
-read domain
-mkdir /etc/letsencrypt
-mkdir /etc/letsencrypt/live
-mkdir /etc/letsencrypt/live/$domain
+ if ! [ "connect_mode" = "2" ]; then
+ echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
+ echo -e "Убедитесь, что вы не исчерпали лимит бесплатных сертификатов ( 5 за 2 недели). \nЛибо загрузите свои сертификаты с вашего ПК\n"
+ echo -e "1 - у меня нет сертификата"
+ echo -e "2 - у меня есть сертификат"
+ until [[ $cert_availability =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_availability;done
+ case "$cert_availability" in
+ 1)
+  echo -e "Укажите ваш домен"
+  read domain;;
+ 2)
+  echo -e "Укажите ваш домен"
+  read domain
+  mkdir /etc/letsencrypt
+  mkdir /etc/letsencrypt/live
+  mkdir /etc/letsencrypt/live/$domain
 
-echo -e "Для загрузки сертификатов выполните на вашем компьютере -" 
-echo -e "scp C:\\directory\fullchain.pem root@$ip:/etc/letsencrypt/live/$domain/"
-echo -e "scp C:\\directory\privkey.pem root@$ip:/etc/letsencrypt/live/$domain/"
-echo -e "Загружайте каждый сертификат по отдельности, а не всю директорию!"
+  echo -e "Для загрузки сертификатов выполните на вашем компьютере -" 
+  echo -e "scp C:\\directory\fullchain.pem root@$ip:/etc/letsencrypt/live/$domain/"
+  echo -e "scp C:\\directory\privkey.pem root@$ip:/etc/letsencrypt/live/$domain/"
+  echo -e "Загружайте каждый сертификат по отдельности, а не всю директорию!"
 
-echo -e "\nПо окнончании загрузки сертификатов нажмите Enter"
-read wait
-echo -e "Проверка наличия сертификатов"
-if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
-echo "${GREEN}Сертификаты найдены${DEFAULT}"
-else 
-echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}"
-read value
-case "$value" in
-1)cert_availability=1;;
-2)connect_mode=2;;
-esac
-fi;;
-esac
-fi
-fi
+  echo -e "\nПо окнончании загрузки сертификатов нажмите Enter"
+  read wait
+  echo -e "Проверка наличия сертификатов"
+  if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
+   echo "${GREEN}Сертификаты найдены${DEFAULT}"
+  else 
+   echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}"
+   read value
+   case "$value" in
+    1)cert_availability=1;;
+    2)connect_mode=2;;
+   esac
+  fi;;
+  esac
+ fi
+ fi
+
 }
 
 #----------------------------------------------------------------------
