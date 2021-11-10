@@ -183,6 +183,7 @@ case "$value" in
 1)cert_availability=1;;
 2)connect_mode=2;;
 esac
+fi
 fi;;
 fi
 }
