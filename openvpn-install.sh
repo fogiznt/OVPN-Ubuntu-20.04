@@ -175,16 +175,17 @@ echo -e "\nПо окнончании загрузки сертификатов �
 read wait
 echo -e "Проверка наличия сертификатов"
 if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
-echo "${GREEN}Сертификаты найдены${DEFAULT}";
+echo "${GREEN}Сертификаты найдены${DEFAULT}"
 else 
-echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}";
+echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}"
 read value
 case "$value" in
 1)cert_availability=1;;
 2)connect_mode=2;;
 esac
-fi
 fi;;
+esac
+fi
 fi
 }
 
@@ -257,6 +258,8 @@ case "$cert_availability" in
 1) echo "будет сгенерирован самостоятельно${DEFAULT}";;
 2) echo "был успешно загружен${DEFAULT}";;
 esac
+fi
+fi
 
 echo -e "Дополнительные настройки:"
 if [ "$tls_ver" = "TLS 1.3" ] || [ "$tls_ver" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$(echo $tls_hmac | grep -o -P 'tls-crypt|tls-auth|Не используется')${DEFAULT}";fi
@@ -418,6 +421,7 @@ echo -e "               Сертификат LetsEncrypt"
 certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain >&- 2>&-
 if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
 else echo -e "${RED}ошибка, импорт файла по url работать не будет${DEFAULT}"
+fi
 fi
 
 if ! [ "$tls_hmac" = "Не используется" ];then
