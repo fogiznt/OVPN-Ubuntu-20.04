@@ -245,7 +245,7 @@ if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DE
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
 
 if [ "$auth_mode" = "Логин/Пароль" ];then 
-echo -n -e "  Импорт профиля через - ${GREEN}"
+echo -n -e "        Импорт профиля через - ${GREEN}"
 case "$connect_mode" in
 1) echo -e "URL${DEFAULT}";;
 2) echo -e "Файл${DEFAULT}";;
@@ -253,8 +253,8 @@ case "$connect_mode" in
 esac
 
 if ! [ "$connect_mode" = "2" ];then
-echo -e "Домен - ${GREEN}$domain${DEFAULT}"
-echo -n -e "Сертификат - ${GREEN}"
+echo -e "        Домен - ${GREEN}$domain${DEFAULT}"
+echo -n -e "        Сертификат - ${GREEN}"
 case "$cert_availability" in
 1) echo "будет сгенерирован самостоятельно${DEFAULT}";;
 2) echo "был успешно загружен${DEFAULT}";;
@@ -1000,6 +1000,8 @@ fi
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
 default_settings
 auth_mode="Логин/Пароль"
+connect_mode=1
+cert_availability=1
 final_config
 read value
 if [ "$value" = "" ];then
