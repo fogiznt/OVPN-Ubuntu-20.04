@@ -350,6 +350,12 @@ tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
 tls-auth\ tls.key\ 0)echo -n -e "               TLS-auth ";;
 esac
 
+if ! [ "$tls_hmac" = "Не используется" ];then
+openvpn --genkey --secret /etc/openvpn/tls.key
+if ! [ -f /etc/openvpn/tls.key ];then echo -e "${RED}ОШИБКА, ключи TLS не сгенерированы. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
+fi
+
+
 if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ];then
 echo -n -e "               client.ovpn "
 cd ~
@@ -425,10 +431,6 @@ else echo -e "${RED}ошибка, импорт файла по url работа�
 fi
 fi
 
-if ! [ "$tls_hmac" = "Не используется" ];then
-openvpn --genkey --secret /etc/openvpn/tls.key
-if ! [ -f /etc/openvpn/tls.key ];then echo -e "${RED}ОШИБКА, ключи TLS не сгенерированы. ${DEFAULT}" exit;else echo -e "${GREEN}OK${DEFAULT}";fi
-fi
 fi }
 
 #----------------------------------------------------------------------
