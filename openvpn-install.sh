@@ -256,8 +256,8 @@ if ! [ "$connect_mode" = "2" ];then
 echo -e "        Домен - ${GREEN}$domain${DEFAULT}"
 echo -n -e "        Сертификат - ${GREEN}"
 case "$cert_availability" in
-1) echo "будет сгенерирован самостоятельно${DEFAULT}";;
-2) echo "был успешно загружен${DEFAULT}";;
+1) echo -e  "будет сгенерирован самостоятельно${DEFAULT}";;
+2) echo -e "был успешно загружен${DEFAULT}";;
 esac
 fi
 fi
@@ -1000,8 +1000,8 @@ fi
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
 default_settings
 auth_mode="Логин/Пароль"
-connect_mode=1
-cert_availability=1
+connect_mode=2
+#cert_availability=1
 final_config
 read value
 if [ "$value" = "" ];then
