@@ -144,6 +144,47 @@ case "$subnet_mask" in
 1)subnet=10.8.8.0 subnet_mask=255.255.255.0;;
 2)subnet=10.8.0.0 subnet_mask=255.255.0.0;;
 esac
+
+if [ "$auth_mode" = "Логин/Пароль" ];then
+echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
+until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done;fi
+
+if ! [ "connect_mode" = "2" ]; then
+echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
+echo -e "Убедитесь, что вы не исчерпали лимит бесплатных сертификатов ( 5 за 2 недели). \nЛибо загрузите свои сертификаты с вашего ПК\n"
+echo -e "1 - у меня нет сертификата"
+echo -e "2 - у меня есть сертификат"
+until [[ $cert_availability =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_availability;done
+case "$cert_availability" in
+1)
+echo -e "Укажите ваш домен"
+read domain;;
+2)
+echo -e "Укажите ваш домен"
+read domain
+mkdir /etc/letsencrypt
+mkdir /etc/letsencrypt/live
+mkdir /etc/letsencrypt/live/$domain
+
+echo -e "Для загрузки сертификатов выполните на вашем компьютере -" 
+echo -e "scp C:\\directory\fullchain.pem root@$ip:/etc/letsencrypt/live/$domain/"
+echo -e "scp C:\\directory\privkey.pem root@$ip:/etc/letsencrypt/live/$domain/"
+echo -e "Загружайте каждый сертификат по отдельности, а не всю директорию!"
+
+echo -e "\nПо окнончании загрузки сертификатов нажмите Enter"
+read wait
+echo -e "Проверка наличия сертификатов"
+if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
+echo "${GREEN}Сертификаты найдены${DEFAULT}";
+else 
+echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}";
+read value
+case "$value" in
+1)cert_availability=1;;
+2)connect_mode=2;;
+esac
+fi;;
+fi
 }
 
 #----------------------------------------------------------------------
@@ -199,10 +240,29 @@ fi
 echo -e "Настройки PKI:\n        Алгоритм клиентских сертификатов - ${GREEN}$(echo $cert_algo | tr a-z A-Z)${DEFAULT}"
 if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DEFAULT}";fi
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
+
+if [ "$auth_mode" = "Логин/Пароль" ];then 
+echo -n -e "  Импорт профиля через - ${GREEN}"
+case "$connect_mode" in
+1) echo -e "URL${DEFAULT}";;
+2) echo -e "Файл${DEFAULT}";;
+3) echo -e "URL и Файл${DEFAULT}";;
+esac
+
+if ! [ "$connect_mode" = "2" ];then
+echo -e "Домен - ${GREEN}$domain${DEFAULT}"
+echo -n -e "Сертификат - ${GREEN}"
+case "$cert_availability" in
+1) echo "будет сгенерирован самостоятельно${DEFAULT}";;
+2) echo "был успешно загружен${DEFAULT}";;
+esac
+
 echo -e "Дополнительные настройки:"
 if [ "$tls_ver" = "TLS 1.3" ] || [ "$tls_ver" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$(echo $tls_hmac | grep -o -P 'tls-crypt|tls-auth|Не используется')${DEFAULT}";fi
 echo -n -e "	Максимальное кол-во клиентов - "
 if [ "$subnet_mask" = "255.255.255.0" ];then echo -e "${GREEN}253${DEFAULT}";else echo -e "${GREEN}65533${DEFAULT}";fi
+
+ 
 echo "-----------------------------------------------------------"
 echo -e "\nEnter - начать установку\nCtrl+C - отмена"
 }
@@ -803,16 +863,7 @@ account_manager
 #-----------------------------------------------------------------------
 
 elif [ "$auth_mode" = "1" ] && [ "$install_type" = "2" ];then
-echo -e "Выберете протокол:\n1 - udp\n2 - tcp"
-until [[ $proto =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 proto;done
-case "$proto" in
-1) proto=udp;;
-2) proto=tcp;;
-esac
-
-echo -e "Укажите порт:"
-until [[ $port =~ ^[0-9]+$ ]] && [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; do read -rp "" -e -i 443 port;done
-
+network_settings
 echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
 echo -e "${GREEN}Настройка канала данных${DEFAULT}"
