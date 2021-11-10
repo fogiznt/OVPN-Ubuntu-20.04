@@ -415,9 +415,11 @@ key-direction 1
 </tls-auth>
 EOF
 fi
+echo -e "${GREEN}OK${DEFAULT}"
+cp ~/client.ovpn /var/www/html/clients/
 fi
 
-echo -e "${GREEN}OK${DEFAULT}"
+
 
 if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
 echo -e "               Сертификат LetsEncrypt"
