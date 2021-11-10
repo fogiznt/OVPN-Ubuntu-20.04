@@ -394,7 +394,7 @@ fi
 
 cat >>client.ovpn <<EOF
 <ca>
-\$ca
+$ca
 </ca>
 EOF
 
@@ -402,7 +402,7 @@ if [ "$tls_hmac" = "tls-crypt tls.key" ];then
 
 cat >>client.ovpn <<EOF
 <tls-crypt>
-\$tls
+$tls
 </tls-crypt>
 EOF
 
@@ -411,7 +411,7 @@ elif [ "$tls_hmac" = "tls-auth tls.key 0" ];then
 cat >>client.ovpn <<EOF
 key-direction 1
 <tls-auth>
-\$tls
+$tls
 </tls-auth>
 EOF
 fi
