@@ -416,6 +416,7 @@ if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && 
 echo -e "               Сертификат LetsEncrypt"
 certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain >&- 2>&-
 if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
+else echo -e "${RED}ошибка, импорт файла по url работать не будет${DEFAULT}"
 fi
 
 if ! [ "$tls_hmac" = "Не используется" ];then
@@ -594,6 +595,32 @@ cat >>index.html <<EOF
 </body>
 </html>
 EOF
+
+
+if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ];then
+mkdir /etc/apache2/ssl
+cp /etc/letsencrypt/live/$domain/fullchain.pem /etc/apache2/ssl/
+cp /etc/letsencrypt/live/$domain/privkey.pem /etc/apache2/ssl/
+
+a2enmod ssl >&- 2>&-
+systemctl restart apache2
+
+cd /etc/apache2/sites-enabled/
+cat >000-default.conf <<EOF
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+        SSLEngine on
+        SSLCertificateFile ssl/fullchain.pem
+        SSLCertificateKeyFile ssl/privkey.pem
+        ServerName $domain
+</VirtualHost>
+apachectl graceful
+EOF
+fi
+
 if ! [ "$(systemctl status apache2 | grep -o "running" )" = "running" ]; then
 echo -e "${RED}ошибка, файлы для подключения будут лежать в директории /root/${DEFAULT}"
 else
