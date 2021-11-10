@@ -1013,7 +1013,7 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
-echo -e "${GREEN}вы можете загрузить файл для подключения -\n http://$ip/clients/client.ovpn${DEFAULT}"
+echo -e "${GREEN}Вы можете загрузить файл для подключения -\n http://$ip/clients/client.ovpn${DEFAULT}"
 fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
