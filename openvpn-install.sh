@@ -357,6 +357,8 @@ fi
 
 
 if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ];then
+ca=\$(cat /usr/share/easy-rsa/pki/ca.crt)
+tls=\$(cat /etc/openvpn/tls.key)
 echo -n -e "               client.ovpn "
 cd ~
 cat >client.ovpn <<EOF
@@ -394,12 +396,6 @@ cat >>client.ovpn <<EOF
 <ca>
 \$ca
 </ca>
-<cert>
-\$cert
-</cert>
-<key>
-\$key
-</key>
 EOF
 
 if [ "$tls_hmac" = "tls-crypt tls.key" ];then
