@@ -293,6 +293,10 @@ if [ "$(dpkg --get-selections apache2 | awk '{print $2}')" = "install" ]; then e
 
 echo -n -e "               zip " & echo -n $(apt install zip -y >&- 2>&-)
 if [ "$(dpkg --get-selections zip | awk '{print $2}')" = "install" ]; then echo -e "${GREEN}OK${DEFAULT}"; else echo -e "${RED}ОШИБКА, попробуйте установить данный пакет самостоятельно -${GREEN} apt install zip ${DEFAULT}" ;fi
+
+if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
+echo -n -e "               certbot " & echo -n $(apt install certbot -y >&- 2>&-)
+fi
 }
 
 #----------------------------------------------------------------------
@@ -340,6 +344,79 @@ case "$tls_hmac" in
 tls-crypt\ tls.key)echo -n -e "               TLS-crypt ";;
 tls-auth\ tls.key\ 0)echo -n -e "               TLS-auth ";;
 esac
+
+if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ] && [ "$cert_availability" = "1" ];then
+echo -n -e "               client.ovpn "
+cd ~
+cat >client.ovpn <<EOF
+client
+dev tun
+proto $proto
+remote $ip $port
+
+auth-user-pass
+
+auth-nocache
+verify-x509-name server name
+tls-client
+remote-cert-tls server
+
+auth $data_digests
+cipher $data_cipher
+
+persist-key
+persist-tun
+nobind
+resolv-retry infinite
+ignore-unknown-option block-outside-dns
+block-outside-dns
+setenv opt block-outside-dns
+EOF
+
+if [ "$proto" = "udp" ];then
+cat >>client.ovpn <<EOF
+explicit-exit-notify 2
+EOF
+fi
+
+cat >>client.ovpn <<EOF
+<ca>
+\$ca
+</ca>
+<cert>
+\$cert
+</cert>
+<key>
+\$key
+</key>
+EOF
+
+if [ "$tls_hmac" = "tls-crypt tls.key" ];then
+
+cat >>client.ovpn <<EOF
+<tls-crypt>
+\$tls
+</tls-crypt>
+EOF
+
+
+elif [ "$tls_hmac" = "tls-auth tls.key 0" ];then
+cat >>client.ovpn <<EOF
+key-direction 1
+<tls-auth>
+\$tls
+</tls-auth>
+EOF
+fi
+fi
+
+echo -e "${GREEN}OK${DEFAULT}"
+
+if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
+echo -e "               Сертификат LetsEncrypt"
+certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain >&- 2>&-
+if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
+fi
 
 if ! [ "$tls_hmac" = "Не используется" ];then
 openvpn --genkey --secret /etc/openvpn/tls.key
