@@ -399,7 +399,6 @@ $ca
 EOF
 
 if [ "$tls_hmac" = "tls-crypt tls.key" ];then
-
 cat >>client.ovpn <<EOF
 <tls-crypt>
 $tls
@@ -417,6 +416,9 @@ EOF
 fi
 echo -e "${GREEN}OK${DEFAULT}"
 cp ~/client.ovpn /var/www/html/clients/
+cat >>/etc/openvpn/user.pass <<EOF
+admin:admin
+EOF
 fi
 
 
@@ -1011,6 +1013,7 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
+echo -e "${GREEN}вы можете загрузить файл для подключения -\n http://$ip/clients/client.ovpn${DEFAULT}"
 fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
