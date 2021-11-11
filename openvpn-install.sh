@@ -627,8 +627,8 @@ cat >000-default.conf <<EOF
         SSLCertificateKeyFile ssl/privkey.pem
         ServerName $domain
 </VirtualHost>
-apachectl graceful
 EOF
+apachectl graceful
 fi
 
 if ! [ "$(systemctl status apache2 | grep -o "running" )" = "running" ]; then
