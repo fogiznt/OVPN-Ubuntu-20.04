@@ -356,7 +356,7 @@ if ! [ -f /etc/openvpn/tls.key ];then echo -e "${RED}ОШИБКА, ключи TL
 fi
 
 
-if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "1" ];then
+if [ "$auth_mode" = "Логин/Пароль" ];then
 ca=$(cat /usr/share/easy-rsa/pki/ca.crt)
 tls=$(cat /etc/openvpn/tls.key)
 echo -n -e "               client.ovpn "
