@@ -425,7 +425,9 @@ fi
 
 if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
 echo -e "               Сертификат LetsEncrypt"
+systemctl stop apache2 >&- 2>&-
 certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain >&- 2>&-
+systemctl start apache2 >&- 2>&-
 if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
 else echo -e "${RED}ошибка, импорт файла по url работать не будет${DEFAULT}"
 fi
