@@ -301,6 +301,7 @@ if [ "$(dpkg --get-selections zip | awk '{print $2}')" = "install" ]; then echo 
 
 if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
 echo -n -e "               certbot " & echo -n $(apt install certbot -y >&- 2>&-)
+if [ "$(dpkg --get-selections certbot | awk '{print $2}')" = "install" ]; then echo -e "${GREEN}OK${DEFAULT}"; else echo -e "${RED}ОШИБКА, попробуйте установить данный пакет самостоятельно -${GREEN} apt install certbot ${DEFAULT}"
 fi
 }
 
