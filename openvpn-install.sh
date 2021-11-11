@@ -1041,6 +1041,11 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
+if ! [ "$connect_mode" = "2" ];then
+echo " URL - $domain/clients/client.ovpn"
+else
+echo "Загрузить файл - http://$ip/clients/client.ovpn"
+fi
 fi
 fi
 
