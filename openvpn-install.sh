@@ -41,6 +41,7 @@ subnet_mask=255.255.255.0
 #----------------------------------------------------------------------
 
 tls_settings(){
+echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 echo -e "Выберите версию TLS:\n1 - 1.3 - рекомендуется\n2 - 1.2"
 until [[ $tls_ver =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 tls_ver;done
 
@@ -75,6 +76,7 @@ esac }
 #----------------------------------------------------------------------
 
 data_channel_settings(){
+echo -e "${GREEN}Настройка канала данных${DEFAULT}"
 echo -e "Выберите алгоритм шифрования:\n1 - AES-128-GCM - рекомендуется\n2 - AES-256-GCM\n3 - AES-128-CBC - для старых устройств\n4 - AES-256-CBC"
 until [[ $data_cipher =~ ^[1-4]$ ]]; do read -rp "[1-4]:" -e -i 1 data_cipher;done
 echo -e "Выберите алгоритм хэш-функции:\n1 - SHA256 - рекомендуется\n2 - SHA384\n3 - SHA512"
@@ -96,6 +98,7 @@ esac }
 #----------------------------------------------------------------------
 
 pki_settings(){
+echo -e "${GREEN}Настройка сертификатов${DEFAULT}"
 echo -e "Выберите алгоритм клиентских сертификатов:\n1 - EC - рекомендуется\n2 - RSA"
 until [[ $cert_algo =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_algo;done
 
@@ -119,6 +122,7 @@ esac
 #----------------------------------------------------------------------
 
 clients_settings(){
+echo -e "${GREEN}Клиентские настройки${DEFAULT}"
 #ip=$(curl check-host.net/ip 2>/dev/null) >&- 2>&-
 ip=$(hostname -i)
 echo -e "Укажите внешний ip сервера"
@@ -145,48 +149,48 @@ case "$subnet_mask" in
 2)subnet=10.8.0.0 subnet_mask=255.255.0.0;;
 esac
 
-if [ "$auth_mode" = "2" ];then
-echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
-until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done
-
- if ! [ "connect_mode" = "2" ]; then
- echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
- echo -e "Убедитесь, что вы не исчерпали лимит бесплатных сертификатов ( 5 за 2 недели). \nЛибо загрузите свои сертификаты с вашего ПК\n"
- echo -e "1 - у меня нет сертификата"
- echo -e "2 - у меня есть сертификат"
- until [[ $cert_availability =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_availability;done
- case "$cert_availability" in
- 1)
-  echo -e "Укажите ваш домен"
-  read domain;;
- 2)
-  echo -e "Укажите ваш домен"
-  read domain
-  mkdir /etc/letsencrypt
-  mkdir /etc/letsencrypt/live
-  mkdir /etc/letsencrypt/live/$domain
-
-  echo -e "Для загрузки сертификатов выполните на вашем компьютере -" 
-  echo -e "scp C:\\directory\fullchain.pem root@$ip:/etc/letsencrypt/live/$domain/"
-  echo -e "scp C:\\directory\privkey.pem root@$ip:/etc/letsencrypt/live/$domain/"
-  echo -e "Загружайте каждый сертификат по отдельности, а не всю директорию!"
-
-  echo -e "\nПо окнончании загрузки сертификатов нажмите Enter"
-  read wait
-  echo -e "Проверка наличия сертификатов"
-  if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
-   echo "${GREEN}Сертификаты найдены${DEFAULT}"
-  else 
-   echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}"
-   read value
-   case "$value" in
-    1)cert_availability=1;;
-    2)connect_mode=2;;
-   esac
-  fi;;
-  esac
- fi
- fi
+#if [ "$auth_mode" = "2" ];then
+#echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
+#until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done
+#
+# if ! [ "connect_mode" = "2" ]; then
+# echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
+# echo -e "Убедитесь, что вы не исчерпали лимит бесплатных сертификатов ( 5 за 2 недели). \nЛибо загрузите свои сертификаты с вашего ПК\n"
+# echo -e "1 - у меня нет сертификата"
+# echo -e "2 - у меня есть сертификат"
+# until [[ $cert_availability =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 cert_availability;done
+# case "$cert_availability" in
+# 1)
+#  echo -e "Укажите ваш домен"
+#  read domain;;
+# 2)
+#  echo -e "Укажите ваш домен"
+#  read domain
+#  mkdir /etc/letsencrypt
+#  mkdir /etc/letsencrypt/live
+#  mkdir /etc/letsencrypt/live/$domain
+#
+#  echo -e "Для загрузки сертификатов выполните на вашем компьютере -" 
+#  echo -e "scp C:\\directory\fullchain.pem root@$ip:/etc/letsencrypt/live/$domain/"
+#  echo -e "scp C:\\directory\privkey.pem root@$ip:/etc/letsencrypt/live/$domain/"
+#  echo -e "Загружайте каждый сертификат по отдельности, а не всю директорию!"
+#
+#  echo -e "\nПо окнончании загрузки сертификатов нажмите Enter"
+#  read wait
+#  echo -e "Проверка наличия сертификатов"
+#  if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then 
+#   echo "${GREEN}Сертификаты найдены${DEFAULT}"
+#  else 
+#   echo "${RED}Сертификаты не найдены,\n1 - сгенерировать сертификаты заново\n2 - отказаться от URL - импорт профиля${DEFAULT}"
+#   read value
+#   case "$value" in
+#    1)cert_availability=1;;
+#    2)connect_mode=2;;
+#   esac
+#  fi;;
+#  esac
+# fi
+# fi
 
 }
 
@@ -207,6 +211,7 @@ until [[ $port =~ ^[0-9]+$ ]] && [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; do 
 #----------------------------------------------------------------------
 
 hmac_settings(){
+echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
 echo -e "Дополнительная подпись HMAC к TLS-пакетам:\n1 - TLS-crypt - рекомендуется\n2 - TLS-auth\n3 - не использовать"
 until [[ $tls_hmac =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 tls_hmac;done
 case "$tls_hmac" in
@@ -244,23 +249,23 @@ echo -e "Настройки PKI:\n        Алгоритм клиентских 
 if [ "$cert_algo" = "ec" ];then echo -e "	Кривая - ${GREEN}$cert_curve${DEFAULT}";fi
 echo -e "Клиентские настройки:\n        ip сервера - ${GREEN}$ip${DEFAULT}\n        DNS - ${GREEN}$dns_server${DEFAULT}"
 
-if [ "$auth_mode" = "Логин/Пароль" ];then 
-echo -n -e "        Импорт профиля через - ${GREEN}"
-case "$connect_mode" in
-1) echo -e "URL${DEFAULT}";;
-2) echo -e "Файл${DEFAULT}";;
-3) echo -e "URL и Файл${DEFAULT}";;
-esac
-
-if ! [ "$connect_mode" = "2" ];then
-echo -e "        Домен - ${GREEN}$domain${DEFAULT}"
-echo -n -e "        Сертификат - ${GREEN}"
-case "$cert_availability" in
-1) echo -e  "будет сгенерирован самостоятельно${DEFAULT}";;
-2) echo -e "был успешно загружен${DEFAULT}";;
-esac
-fi
-fi
+#if [ "$auth_mode" = "Логин/Пароль" ];then 
+#echo -n -e "        Импорт профиля через - ${GREEN}"
+#case "$connect_mode" in
+#1) echo -e "URL${DEFAULT}";;
+#2) echo -e "Файл${DEFAULT}";;
+#3) echo -e "URL и Файл${DEFAULT}";;
+#esac
+#
+#if ! [ "$connect_mode" = "2" ];then
+#echo -e "        Домен - ${GREEN}$domain${DEFAULT}"
+#echo -n -e "        Сертификат - ${GREEN}"
+#case "$cert_availability" in
+#1) echo -e  "будет сгенерирован самостоятельно${DEFAULT}";;
+#2) echo -e "был успешно загружен${DEFAULT}";;
+#esac
+#fi
+#fi
 
 echo -e "Дополнительные настройки:"
 if [ "$tls_ver" = "TLS 1.3" ] || [ "$tls_ver" = "TLS 1.2" ];then echo -e "	HMAC подпись - ${GREEN}$(echo $tls_hmac | grep -o -P 'tls-crypt|tls-auth|Не используется')${DEFAULT}";fi
@@ -425,15 +430,15 @@ fi
 
 
 
-if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
-echo -n -e "               Сертификат LetsEncrypt"
-systemctl stop apache2 >&- 2>&-
-certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain &> /dev/null
-systemctl start apache2 >&- 2>&-
-if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
-else echo -e "${RED}ошибка, импорт файла по url работать не будет${DEFAULT}"
-fi
-fi
+#if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ] && [ "$cert_availability" = "1" ];then
+#echo -n -e "               Сертификат LetsEncrypt"
+#systemctl stop apache2 >&- 2>&-
+#certbot certonly --standalone -n -d $domain --agree-tos --email 123@$domain &> /dev/null
+#systemctl start apache2 >&- 2>&-
+#if [ -f /etc/letsencrypt/live/$domain/fullchain.pem ] && [ -f /etc/letsencrypt/live/$domain/privkey.pem ];then echo -e "${GREEN}OK${DEFAULT}"
+#else echo -e "${RED}ошибка, импорт файла по url работать не будет${DEFAULT}"
+#fi
+#fi
 
 fi }
 
@@ -608,29 +613,29 @@ cat >>index.html <<EOF
 EOF
 
 
-if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ];then
-mkdir /etc/apache2/ssl
-cp /etc/letsencrypt/live/$domain/fullchain.pem /etc/apache2/ssl/
-cp /etc/letsencrypt/live/$domain/privkey.pem /etc/apache2/ssl/
-
-a2enmod ssl >&- 2>&-
-systemctl restart apache2
-
-cd /etc/apache2/sites-enabled/
-cat >000-default.conf <<EOF
-<VirtualHost *:443>
-        ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/html
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-        SSLEngine on
-        SSLCertificateFile ssl/fullchain.pem
-        SSLCertificateKeyFile ssl/privkey.pem
-        ServerName $domain
-</VirtualHost>
-EOF
-apachectl graceful
-fi
+#if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ];then
+#mkdir /etc/apache2/ssl
+#cp /etc/letsencrypt/live/$domain/fullchain.pem /etc/apache2/ssl/
+#cp /etc/letsencrypt/live/$domain/privkey.pem /etc/apache2/ssl/
+#
+#a2enmod ssl >&- 2>&-
+#systemctl restart apache2
+#
+#cd /etc/apache2/sites-enabled/
+#cat >000-default.conf <<EOF
+#<VirtualHost *:443>
+#        ServerAdmin webmaster@localhost
+#        DocumentRoot /var/www/html
+#        ErrorLog ${APACHE_LOG_DIR}/error.log
+#        CustomLog ${APACHE_LOG_DIR}/access.log combined
+#        SSLEngine on
+#        SSLCertificateFile ssl/fullchain.pem
+#        SSLCertificateKeyFile ssl/privkey.pem
+#        ServerName $domain
+#</VirtualHost>
+#EOF
+#apachectl graceful
+#fi
 
 if ! [ "$(systemctl status apache2 | grep -o "running" )" = "running" ]; then
 echo -e "${RED}ошибка, файлы для подключения будут лежать в директории /root/${DEFAULT}"
@@ -958,8 +963,8 @@ chmod +x account-manager.sh
 
 #----------------------------------------------------------------------
 
-echo -e "Укажите режим аутентификации:\n1 - TLS - сертификаты\n2 - Логин/Пароль\n3 - Cтатичный ключ"
-until [[ $auth_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 auth_mode;done
+echo -e "Укажите режим аутентификации:\n1 - TLS - сертификаты\n2 - Логин/Пароль"
+until [[ $auth_mode =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 auth_mode;done
 
 echo -e "Выберите режим установки:\n1 - автоматический\n2 - настраиваемый"
 until [[ $install_type =~ ^[1-2]$ ]]; do read -rp "[1-2]:" -e -i 1 install_type;done
@@ -980,19 +985,13 @@ account_manager
 
 elif [ "$auth_mode" = "1" ] && [ "$install_type" = "2" ];then
 network_settings
-echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
-echo -e "${GREEN}Настройка канала данных${DEFAULT}"
 data_channel_settings
-echo -e "${GREEN}Настройка сертификатов${DEFAULT}"
 pki_settings
-echo -e "${GREEN}Клиентские настройки${DEFAULT}"
 clients_settings
-echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
 hmac_settings
 network_settings
 final_config
-
 read value
 if [ "$value" = "" ];then
 package_install
@@ -1006,7 +1005,7 @@ fi
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
 default_settings
 auth_mode="Логин/Пароль"
-connect_mode=2
+#connect_mode=2
 #cert_availability=1
 final_config
 read value
@@ -1022,15 +1021,10 @@ fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
 network_settings
-echo -e "${GREEN}Настройка канала управления${DEFAULT}"
 tls_settings
-echo -e "${GREEN}Настройка канала данных${DEFAULT}"
 data_channel_settings
-echo -e "${GREEN}Настройка сертификатов${DEFAULT}"
 pki_settings
-echo -e "${GREEN}Клиентские настройки${DEFAULT}"
 clients_settings
-echo -e "${GREEN}Дополнительные настройки${DEFAULT}"
 hmac_settings
 final_config
 read value
