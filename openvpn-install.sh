@@ -984,7 +984,7 @@ iptables_settings
 apache2_settings
 account_manager
 echo -e "${GREEN}Установка завершена${DEFAULT}"
-echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
+echo "После добавления пользователя вы можете загрузить файл для подключения - http://$ip/clients/"
 echo "Добавить пользователя - cd ~ && ./account-manager.sh"
 #-----------------------------------------------------------------------
 
@@ -1006,8 +1006,8 @@ iptables_settings
 apache2_settings
 account_manager
 echo -e "${GREEN}Установка завершена${DEFAULT}"
-echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
 echo "Добавить пользователя - cd ~ && ./account-manager.sh"
+echo "После добавления пользователя вы можете загрузить файл для подключения - http://$ip/clients/"
 fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
