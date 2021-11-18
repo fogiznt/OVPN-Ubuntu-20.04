@@ -237,7 +237,8 @@ esac
 echo -e "\nОзнакомтесь с устанавливаемой конфигурацией"
 echo -e "-----------------------------------------------------------"
 echo -e "Порт - ${GREEN}$(echo $proto | tr a-z A-Z):$port${DEFAULT}"
-echo -e "Режим аутентификации - ${GREEN}$auth_mode $(echo $tls_ver | grep -o -P '1.3|1.2')${DEFAULT}"
+echo -e "Режим аутентификации - ${GREEN}$auth_mode${DEFAULT}"
+echo -e "Версия TLS - ${GREEN}$(echo $tls_ver | grep -o -P '1.3|1.2')${DEFAULT}"
 if [ "$tls_ver" = "TLS 1.3" ] || [ "$tls_ver" = "TLS 1.2" ];then
 echo -e "Канал управления:\n	Алгоритм обмена ключами - ${GREEN}ECDH${DEFAULT}\n	Алгоритм аутентификации - ${GREEN}ECDSA${DEFAULT}"
 echo -e "        Симметричное шифрование - ${GREEN}$(echo $tls_cipher | grep -o -P 'AES_128_GCM|AES_256_GCM|CHACHA20_POLY1305|AES-128-GCM|AES-256-GCM|CHACHA20-POLY1305')${DEFAULT}"
