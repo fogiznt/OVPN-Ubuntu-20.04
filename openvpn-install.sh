@@ -421,8 +421,7 @@ $tls
 EOF
 fi
 echo -e "${GREEN}OK${DEFAULT}"
-mkdir /var/www/html/clients
-cp ~/client.ovpn /var/www/html/clients/
+
 cat >>/etc/openvpn/user.pass <<EOF
 admin:admin
 EOF
@@ -611,6 +610,8 @@ cat >>index.html <<EOF
 </body>
 </html>
 EOF
+mkdir /var/www/html/clients
+if [ "$auth_mode" = "Логин/Пароль" ];then cp ~/client.ovpn /var/www/html/clients/;fi
 
 
 #if [ "$auth_mode" = "Логин/Пароль" ] &! [ "$connect_mode" = "2" ];then
@@ -981,6 +982,9 @@ server_install
 iptables_settings
 apache2_settings
 account_manager
+echo -e "${GREEN}Установка завершена${DEFAULT}"
+echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
+echo "Добавить пользователя - cd ~ && ./account-manager.sh"
 #-----------------------------------------------------------------------
 
 elif [ "$auth_mode" = "1" ] && [ "$install_type" = "2" ];then
@@ -1000,6 +1004,9 @@ server_install
 iptables_settings
 apache2_settings
 account_manager
+echo -e "${GREEN}Установка завершена${DEFAULT}"
+echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
+echo "Добавить пользователя - cd ~ && ./account-manager.sh"
 fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "1" ];then
@@ -1016,7 +1023,10 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
-echo -e "${GREEN}Вы можете загрузить файл для подключения -\n http://$ip/clients/client.ovpn${DEFAULT}"
+echo -e "${GREEN}Установка завершена${DEFAULT}"
+echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
+echo "Стандарнтный логин - пароль - admin - admin"
+echo "Сменить пароль\Добавить пользователя - cd ~ && ./account-manager.sh"
 fi
 
 elif [ "$auth_mode" = "2" ] && [ "$install_type" = "2" ];then
@@ -1035,11 +1045,10 @@ server_install
 iptables_settings
 apache2_settings
 pap_account_manager
-if ! [ "$connect_mode" = "2" ];then
-echo " URL - $domain/clients/client.ovpn"
-else
-echo "Загрузить файл - http://$ip/clients/client.ovpn"
-fi
+echo -e "${GREEN}Установка завершена${DEFAULT}"
+echo "Вы можете загрузить файл для подключения - http://$ip/clients/"
+echo "Стандарнтный логин - пароль - admin - admin"
+echo "Сменить пароль\Добавить пользователя - cd ~ && ./account-manager.sh"
 fi
 fi
 
