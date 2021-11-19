@@ -149,9 +149,9 @@ case "$subnet_mask" in
 2)subnet=10.8.0.0 subnet_mask=255.255.0.0;;
 esac
 
-#if [ "$auth_mode" = "2" ];then
-#echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
-#until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done
+# if [ "$auth_mode" = "2" ];then
+# echo -e "Импорт профиля через:\n1 - URL - требуется домен и только для программы OpenVPN Connect\n2 - Файл\n3 - URL и Файл"
+# until [[ $connect_mode =~ ^[1-3]$ ]]; do read -rp "[1-3]:" -e -i 1 connect_mode;done
 #
 # if ! [ "connect_mode" = "2" ]; then
 # echo -e "Потому как программа OpenVPN Connect может подключаться только по HTTPS и только на 443 порту\nПри этом доверяя только валидным сертификатам, то для вашего домена будут выпущены бесплатные сертификаты от LetsEncrypt"
