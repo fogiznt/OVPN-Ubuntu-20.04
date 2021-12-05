@@ -29,5 +29,5 @@ chmod +x openvpn-install.sh
 Добавление пользователей  
 ```
 cd ~ 
-./account_manager.sh
+./account-manager.sh
 ```
