@@ -28,6 +28,7 @@ data_digests=SHA256
 cert_algo=ec
 cert_curve=prime256v1
 ip=$(hostname -i)
+if [ "$ip" = "" ]; then ip=1.1.1.1;fi
 echo -e "Укажите внешний ip сервера"
 read -rp "" -e -i $ip ip
 dns_server=CloudFlare
